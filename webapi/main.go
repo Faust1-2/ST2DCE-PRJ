@@ -11,6 +11,7 @@ type whoami struct {
 	Name  string
 	Title string
 	State string
+	Team  string
 }
 
 func main() {
@@ -22,6 +23,7 @@ func whoAmI(response http.ResponseWriter, r *http.Request) {
 		whoami{Name: "Efrei Paris",
 			Title: "DevOps and Continous Deployment",
 			State: "FR",
+		        Team: "SuperCool",
 		},
 	}
 

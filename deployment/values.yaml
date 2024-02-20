@@ -1,8 +1,8 @@
 metadata:
-  name: supercool-namespace
+  name: supercool
   namespace: production
   labels:
-    name: super-cool-namespace
+    name: supercool
 
 replicaCount: 1
 

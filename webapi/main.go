@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 type whoami struct {
@@ -15,6 +17,7 @@ type whoami struct {
 }
 
 func main() {
+	prometheus.MustRegister(prometheus.NewBuildInfoCollector())
 	request1()
 }
 
@@ -48,6 +51,7 @@ func request1() {
 	http.HandleFunc("/", homePage)
 	http.HandleFunc("/aboutme", aboutMe)
 	http.HandleFunc("/whoami", whoAmI)
+	http.Handle("/metrics", promhttp.Handler())
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

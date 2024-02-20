@@ -42,3 +42,5 @@ node {
   }
 }
 ```
+
+kubectl create configmap prometheus-config --from-file=prometheus.yml=prometheus-config.yml -n development

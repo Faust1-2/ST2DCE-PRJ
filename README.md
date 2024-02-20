@@ -43,4 +43,4 @@ node {
 }
 ```
 
-kubectl create configmap prometheus-config --from-file=prometheus.yml=prometheus-config.yml -n development
+kubectl --namespace production port-forward $POD_NAME 3000

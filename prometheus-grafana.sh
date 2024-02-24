@@ -3,7 +3,7 @@ kubectl create configmap prometheus-config --from-file=prometheus.yml=prometheus
 kubectl apply -f prometheus.yml
 
 # Install Grafana via Helm on the production namespace.
-helm upgrade --install grafana grafana/grafana -n production
+helm upgrade --install grafana grafana/grafana --set persistence.enabled=true,persistence.size=10Gi -n production
 
 # Get the password for the Grafana admin user.
 kubectl get secret --namespace production grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo

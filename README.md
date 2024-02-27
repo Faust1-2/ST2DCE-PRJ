@@ -77,14 +77,12 @@ OR
 
 Run:
 ```bash
-kubectl create configmap prometheus-config --from-file=prometheus.yml=prometheus-config.yml -n production -o yaml | kubectl apply -f -
-kubectl apply -f prometheus.yml
-helm upgrade --install grafana grafana/grafana --set persistence.enabled=true,persistence.size=10Gi -n production
+helm upgrade --install grafana grafana/grafana --set service.type=LoadBalancer,service.port=3000 -n production
 ```
 
 You can now retrieve the `admin` password:
 ```bash
-kubectl get secret --namespace production grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+kubectl get secret -n production grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
 ```
 
 To access grafana, you must retrieve the pod it is running on:
@@ -97,7 +95,13 @@ Take the pod name that contains "grafana" and replace it in the followind comman
 kubectl port-forward -n production <POD_NAME> 3000
 ```
 
-### Setup your datasource
+### Setup your prometheus datasource
+
+First of all, deploy your prometheus application:
+
+```bash
+kubectl apply -f prometheus.yml
+```
 
 Grafana will ask you to add a datasource. Since we are using prometheus to provide metrics about our wonderfull app, we will take a `prometheus` datasource.
 
@@ -105,4 +109,16 @@ You only have to provide the `prometheus server url`, where grafana will get the
 
 For us, it is equal to `http://prometheus-service:9090`. This is because our grafana is runned as a kubernetes deployment and service, and so, will use the internal DNS of kubernetes to retrieve the metrics.
 
-Once you added it, try the url, it should work fine, and create a dashboard with the exported metrics of grafana.
+Once you added it, try the url, it should work fine, and create a dashboard with the exported metrics on grafana.
+
+### Setup your loki datasource
+
+First of all, deploy your loki stack: 
+```bash
+helm install loki loki/loki-stack --set grafana.enabled=false --namespace=production
+```
+
+Let's head one more time to the data sources. This time, we will look for a `loki` datasource.
+In the URL field, pase `http://loki:3100`. You can now click on "Save and test". Even if the test fail, it should be fine.
+
+You can now access the logs from loki in the "Explorer" and "Dashboard" views. 

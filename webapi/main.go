@@ -26,7 +26,7 @@ func whoAmI(response http.ResponseWriter, r *http.Request) {
 		whoami{Name: "Efrei Paris",
 			Title: "DevOps and Continous Deployment",
 			State: "FR",
-		        Team: "SuperCool",
+		  Team: "SuperCool",
 		},
 	}
 

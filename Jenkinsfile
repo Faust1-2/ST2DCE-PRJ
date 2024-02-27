@@ -13,7 +13,7 @@ node {
         credentialsId: 'kubernetes-credentials',
         serverUrl: 'https://localhost:6443'    
       ]) {
-        sh 'helm install development-${BUILD_ID} deployment/ --set image.tag=${BUILD_ID} --set metadata.namespace=development --set service.port=8082 --create-namespace'
+        sh 'helm install development-${BUILD_ID} deployment/ --set image.tag=${BUILD_ID} --set metadata.namespace=development --set service.port=8082 -n development'
       }
     }
 
@@ -32,7 +32,7 @@ node {
             credentialsId: 'kubernetes-credentials',
             serverUrl: 'https://localhost:6443'    
           ]) {
-            sh 'helm upgrade --install production deployment/ --set image.tag=${BUILD_ID} --set metadata.namespace=production --create-namespace'
+            sh 'helm upgrade --install production deployment/ --set image.tag=${BUILD_ID} --set metadata.namespace=production -n production'
           }
         }
       } else {
@@ -50,7 +50,7 @@ node {
         serverUrl: 'https://localhost:6443'    
       ]) {
         echo 'Deleting deployment...'
-        sh 'helm uninstall development-${BUILD_ID}'
+        sh 'helm uninstall development-${BUILD_ID} -n development'
         echo 'Deleted'
       }
     }

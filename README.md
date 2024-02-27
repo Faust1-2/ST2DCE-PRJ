@@ -115,7 +115,7 @@ Once you added it, try the url, it should work fine, and create a dashboard with
 
 First of all, deploy your loki stack: 
 ```bash
-helm install loki loki/loki-stack --set grafana.enabled=false --namespace=production
+helm install loki grafana/loki-stack --set grafana.enabled=false --namespace=production
 ```
 
 Let's head one more time to the data sources. This time, we will look for a `loki` datasource.

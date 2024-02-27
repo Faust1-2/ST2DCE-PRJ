@@ -1,3 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: production
+data:
+  prometheus.yml: |
+    scrape_configs:
+    - job_name: 'production-service'
+      scrape_interval: 5s
+      static_configs:
+        - targets: ['devops-service:8081']
+    rule_files:
+    - /etc/prometheus/alerts/alert_rules.yml
+  alert_rules.yml: |
+    groups:
+    - name: Job down alert
+      rules:
+      - alert: JobDown
+        expr: up{job="production-service"} == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: Job has been down for more than 5 minutes
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -26,6 +52,8 @@ spec:
               mountPath: /etc/prometheus/
             - name: prometheus-storage-volume
               mountPath: /prometheus/
+            - name: prometheus-alert-rules-volume
+              mountPath: /etc/prometheus/alerts/
       volumes:
         - name: prometheus-config-volume
           configMap:
@@ -33,6 +61,13 @@ spec:
             name: prometheus-config
         - name: prometheus-storage-volume
           emptyDir: {}
+        - name: prometheus-alert-rules-volume
+          configMap:
+            defaultMode: 420
+            name: prometheus-config
+            items:
+            - key: alert_rules.yml
+              path: alert_rules.yml
 ---
 apiVersion: v1
 kind: Service
@@ -42,8 +77,7 @@ metadata:
 spec:
   selector: 
     app: prometheus-server
-  type: NodePort
+  type: LoadBalancer
   ports:
     - port: 9090
       targetPort: 9090
-      nodePort: 30000

@@ -5,7 +5,7 @@ node {
 
   try {
     stage('build docker image') {
-      sh 'docker build -t supercool-docker:${BUILD_ID} --build-arg VARIABLE=${BUILD_ID} .'
+      sh 'docker build -t supercool-docker:${BUILD_ID} .'
     }
 
     stage('Deploy to development') {
